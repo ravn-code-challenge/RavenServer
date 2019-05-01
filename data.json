@@ -1,0 +1,63 @@
+[
+  {
+    "id" : 1,
+    "type": "GIF",
+    "title": "Aquaman old chum",
+    "src": "https://media0.giphy.com/media/Hz6upbrOw14sM/200w.gif"
+  },
+  {
+    "id" : 2,
+    "type": "GIF",
+    "title": "Aquaman fighting",
+    "src": "https://media1.giphy.com/media/W9UHNpN56ywNO/giphy.gif"
+  },
+  {
+    "id" : 3,
+    "type": "GIF",
+    "title": "Aquaman helpful",
+    "src": "https://media3.giphy.com/media/jyUOvOtG6w1na/giphy.gif"
+  },
+  {
+    "id" : 4,
+    "type": "GIF",
+    "title": "Spiderman crying",
+    "src": "https://media2.giphy.com/media/14v2j9FG5lXpMA/giphy.gif"
+  },
+  {
+    "id" : 5,
+    "type": "GIF",
+    "title": "3D Spiderman",
+    "src": "https://media2.giphy.com/media/3owyphAb5iFr9Ops4w/giphy.gif"
+  },
+  {
+    "id" : 6,
+    "type": "GIF",
+    "title": "Same Spider",
+    "src": "https://media3.giphy.com/media/l36kU80xPf0ojG0Erg/giphy.gif"
+  },
+  {
+    "id" : 7,
+    "type": "GIF",
+    "title": "Spiderman Trailer",
+    "src": "https://media3.giphy.com/media/3ofT5EDMrdsm7i4PLO/giphy.gif"
+  },
+  {
+    "id" : 8,
+    "type": "GIF",
+    "title": "Spiderman Kick",
+    "src": "https://media0.giphy.com/media/yoJC2HuqslbIL96pna/giphy.gif"
+  },
+  {
+    "id" : 9,
+    "type": "GIF",
+    "title": "Spiderman Kick",
+    "src": "https://media1.giphy.com/media/115DeF9pRkOCeQ/giphy.gif"
+  },
+  {
+    "id" : 10,
+    "type": "GIF",
+    "title": "Spiderman Iron man",
+    "src": "https://media2.giphy.com/media/3o6ZtcLKytmWgdDOFO/giphy.gif"
+  }
+
+]

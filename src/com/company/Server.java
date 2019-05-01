@@ -1,14 +1,24 @@
 package com.company;
 
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Server extends Thread{
 
@@ -56,17 +66,16 @@ public class Server extends Thread{
         catch (IOException e) {
             System.out.println("Could not close sockets: " + e);
         }
-
     }
 
     // ClientHandler class
     class ClientHandler extends Thread {
-        DateFormat fordate = new SimpleDateFormat("yyyy/MM/dd");
-        DateFormat fortime = new SimpleDateFormat("hh:mm:ss");
         final DataInputStream dis;
         final DataOutputStream dos;
         final Socket s;
-
+        private ReadWriteLock rwlock = new ReentrantReadWriteLock();
+        JSONParser parser = new JSONParser();
+        String sortField;
 
         // Constructor
         public ClientHandler(Socket s, DataInputStream dis, DataOutputStream dos)
@@ -76,52 +85,80 @@ public class Server extends Thread{
             this.dos = dos;
         }
 
+        private void list() {
+            rwlock.readLock().lock();
+            try {
+                System.out.println("Reading json file");
+                JSONArray a = (JSONArray) parser.parse(new FileReader("data.json"));
+                dos.writeUTF(a.toJSONString());
+            } catch (IOException e) {
+                System.out.println("IOEception: " + e);
+            } catch (ParseException e) {
+                System.out.println("Parse exception: " + e);
+            }
+
+            finally {
+                rwlock.readLock().unlock();
+            }
+        }
+
+        String getFirstArgument(String arg) {
+            int index = arg.indexOf("{");
+            if(index != -1) {
+                return arg.substring(0, index);
+            }
+            else {
+                return arg;
+            }
+        }
+
+        String getSecondArgument(String arg) {
+            int index = arg.indexOf("{");
+            if(index != -1) {
+                return arg.substring(index);
+            }
+            else {
+                return null;
+            }
+        }
+
+
         @Override
-        public void run()
-        {
-            String received;
-            String toreturn;
+        public void run() {
+            String argument;
+            String firstArgument;
+            String secondArgument;
             while (true)
             {
                 try {
 
-                    // Ask user what he wants
-                    dos.writeUTF("What do you want?[Date | Time]..\n"+
-                            "Type Exit to terminate connection.");
-
                     // receive the answer from client
-                    received = dis.readUTF();
+                    argument = dis.readUTF();
+                    firstArgument = getFirstArgument(argument);
+                    secondArgument = getSecondArgument(argument);
 
-                    if(received.equals("Exit"))
-                    {
-                        System.out.println("Client " + this.s + " sends exit...");
-                        System.out.println("Closing this connection.");
+                    if(firstArgument.toLowerCase().contains("list")) {
+                        System.out.println("List called");
+                        list();
+                    }
+                    else if(firstArgument.toLowerCase().contains("add")) {
+                        System.out.println("Add called");
+                    }
+                    else if(firstArgument.toLowerCase().contains("remove")) {
+                        System.out.println("Remove called");
+                    }
+                    else if(firstArgument.toLowerCase().contains("update")) {
+                        System.out.println("Update called");
+                    }
+                    else if(firstArgument.toLowerCase().contains("sort")) {
+                        System.out.println("Sort called");
+                    }
+                    else if(firstArgument.toLowerCase().contains("exit")) {
+                        System.out.println("Exit called");
                         this.s.close();
-                        System.out.println("Connection closed");
                         break;
                     }
 
-                    // creating Date object
-                    Date date = new Date();
-
-                    // write on output stream based on the
-                    // answer from the client
-                    switch (received) {
-
-                        case "Date" :
-                            toreturn = fordate.format(date);
-                            dos.writeUTF(toreturn);
-                            break;
-
-                        case "Time" :
-                            toreturn = fortime.format(date);
-                            dos.writeUTF(toreturn);
-                            break;
-
-                        default:
-                            dos.writeUTF("Invalid input");
-                            break;
-                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -132,6 +169,7 @@ public class Server extends Thread{
                 // closing resources
                 this.dis.close();
                 this.dos.close();
+                System.out.println("Thread has ended");
 
             }catch(IOException e){
                 e.printStackTrace();
