@@ -1,23 +1,11 @@
 package com.company;
 
-import com.google.gson.Gson;
-import org.json.simple.JSONArray;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -25,11 +13,11 @@ public class Server extends Thread{
 
     ServerSocket ss;
     ArrayList<Socket> clients = new ArrayList<>();
-    GiphyList giphyList;
+    GiphyController giphyController;
 
     @Override
     public void run() {
-        giphyList = GiphyList.getInstance();
+        giphyController = GiphyController.getInstance();
         try {
             ss = new ServerSocket(8381);
             Socket s = null;
@@ -127,13 +115,13 @@ public class Server extends Thread{
 
                     if(firstArgument.toLowerCase().contains("list")) {
                         System.out.println("List called");
-                        System.out.println(giphyList.getJsonList());
-                        dos.writeUTF(giphyList.getJsonList());
+                        System.out.println(giphyController.getJsonList());
+                        dos.writeUTF(giphyController.getJsonList());
                     }
                     else if(firstArgument.toLowerCase().contains("add")) {
                         System.out.println("Add called");
                         System.out.println(secondArgument);
-                        boolean result = giphyList.add(secondArgument);
+                        boolean result = giphyController.add(secondArgument);
                         if(result) {
                             System.out.println("Write succeeded");
                             dos.writeUTF("ok");
@@ -146,7 +134,7 @@ public class Server extends Thread{
                     else if(firstArgument.toLowerCase().contains("update")) {
                         System.out.println("Update called: " + argument);
                         System.out.println(secondArgument);
-                        boolean result = giphyList.update(secondArgument);
+                        boolean result = giphyController.update(secondArgument);
                         if(result) {
                             System.out.println("Write succeeded");
                             dos.writeUTF("ok");
@@ -162,7 +150,7 @@ public class Server extends Thread{
                             dos.writeUTF("error/does not exist");
                         }
                         else {
-                            boolean removeStatus = giphyList.remove(Long.parseLong(secondArgument));
+                            boolean removeStatus = giphyController.remove(Long.parseLong(secondArgument));
                             if(removeStatus) {
                                 dos.writeUTF("ok");
                             }
