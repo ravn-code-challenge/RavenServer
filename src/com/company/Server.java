@@ -1,5 +1,6 @@
 package com.company;
 
+import com.google.gson.Gson;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -24,9 +25,11 @@ public class Server extends Thread{
 
     ServerSocket ss;
     ArrayList<Socket> clients = new ArrayList<>();
+    GiphyList giphyList;
 
     @Override
     public void run() {
+        giphyList = GiphyList.getInstance();
         try {
             ss = new ServerSocket(8381);
             Socket s = null;
@@ -74,7 +77,6 @@ public class Server extends Thread{
         final DataOutputStream dos;
         final Socket s;
         private ReadWriteLock rwlock = new ReentrantReadWriteLock();
-        JSONParser parser = new JSONParser();
         String sortField;
 
         // Constructor
@@ -85,22 +87,6 @@ public class Server extends Thread{
             this.dos = dos;
         }
 
-        private void list() {
-            rwlock.readLock().lock();
-            try {
-                System.out.println("Reading json file");
-                JSONArray a = (JSONArray) parser.parse(new FileReader("data.json"));
-                dos.writeUTF(a.toJSONString());
-            } catch (IOException e) {
-                System.out.println("IOEception: " + e);
-            } catch (ParseException e) {
-                System.out.println("Parse exception: " + e);
-            }
-
-            finally {
-                rwlock.readLock().unlock();
-            }
-        }
 
         String getFirstArgument(String arg) {
             int index = arg.indexOf("{");
@@ -113,14 +99,16 @@ public class Server extends Thread{
         }
 
         String getSecondArgument(String arg) {
-            int index = arg.indexOf("{");
+            int index = arg.indexOf("/");
             if(index != -1) {
-                return arg.substring(index);
+                return arg.substring(index+1);
             }
             else {
                 return null;
             }
         }
+
+
 
 
         @Override
@@ -139,17 +127,52 @@ public class Server extends Thread{
 
                     if(firstArgument.toLowerCase().contains("list")) {
                         System.out.println("List called");
-                        list();
+                        System.out.println(giphyList.getJsonList());
+                        dos.writeUTF(giphyList.getJsonList());
                     }
                     else if(firstArgument.toLowerCase().contains("add")) {
                         System.out.println("Add called");
-                    }
-                    else if(firstArgument.toLowerCase().contains("remove")) {
-                        System.out.println("Remove called");
+                        System.out.println(secondArgument);
+                        boolean result = giphyList.add(secondArgument);
+                        if(result) {
+                            System.out.println("Write succeeded");
+                            dos.writeUTF("ok");
+                        }
+                        else {
+                            System.out.println("Write failed");
+                            dos.writeUTF("error");
+                        }
                     }
                     else if(firstArgument.toLowerCase().contains("update")) {
-                        System.out.println("Update called");
+                        System.out.println("Update called: " + argument);
+                        System.out.println(secondArgument);
+                        boolean result = giphyList.update(secondArgument);
+                        if(result) {
+                            System.out.println("Write succeeded");
+                            dos.writeUTF("ok");
+                        }
+                        else {
+                            System.out.println("Write failed");
+                            dos.writeUTF("error");
+                        }
                     }
+                    else if(firstArgument.toLowerCase().contains("remove")) {
+                        System.out.println("Remove called, ID: " + secondArgument);
+                        if(secondArgument == null) {
+                            dos.writeUTF("error/does not exist");
+                        }
+                        else {
+                            boolean removeStatus = giphyList.remove(Long.parseLong(secondArgument));
+                            if(removeStatus) {
+                                dos.writeUTF("ok");
+                            }
+                            else {
+                                dos.writeUTF("error/does not exist");
+                            }
+                        }
+
+                    }
+
                     else if(firstArgument.toLowerCase().contains("sort")) {
                         System.out.println("Sort called");
                     }
@@ -161,6 +184,7 @@ public class Server extends Thread{
 
                 } catch (IOException e) {
                     e.printStackTrace();
+                    return;
                 }
             }
 

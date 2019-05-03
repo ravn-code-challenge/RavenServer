@@ -7,24 +7,24 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class GiphyModel {
-    int id;
+    long id;
     String type;
     String title;
     String src;
     String author;
     Date date;
-    int viewCount;
-    int viewOrder;
+    long viewCount;
+    long viewOrder;
 
     public GiphyModel(JSONObject object) {
-        id = (int)object.get("id");
+        id = (long)object.get("id");
         type = (String)object.get("type");
         title = (String)object.get("title");
         src = (String)object.get("src");
         author = (String)object.get("author");
         date = new Date((long)object.get("date"));
-        viewCount = (int)object.get("viewCount");
-        viewOrder = (int)object.get("viewOrder");
+        viewCount = (long)object.get("viewCount");
+        viewOrder = (long)object.get("viewOrder");
     }
 
 
