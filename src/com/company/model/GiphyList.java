@@ -1,8 +1,8 @@
-package com.company;
+package com.company.model;
 
 import java.util.ArrayList;
 
-import static com.company.GiphyModel.*;
+import static com.company.model.GiphyModel.*;
 
 public class GiphyList {
 

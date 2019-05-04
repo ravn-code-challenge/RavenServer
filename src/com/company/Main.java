@@ -1,5 +1,8 @@
 package com.company;
 
+import com.company.server.ApiServer;
+import com.company.server.PushServer;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,10 +12,12 @@ public class Main {
     public static void main(String[] args) {
 
         //Start server thread
-        Server server = new Server();
+        ApiServer server = new ApiServer();
         server.start();
 
-        Server s = new Server();
+        PushServer pushServer = PushServer.getInstance();
+        pushServer.start();
+
         //Enter data using BufferReader
         BufferedReader reader =
                 new BufferedReader(new InputStreamReader(System.in));

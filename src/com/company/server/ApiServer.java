@@ -1,4 +1,4 @@
-package com.company;
+package com.company.server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class Server extends Thread{
+public class ApiServer extends Thread{
 
     ServerSocket ss;
     ArrayList<Socket> clients = new ArrayList<>();
@@ -24,7 +24,7 @@ public class Server extends Thread{
             while (true) {
                 s = ss.accept();
                 clients.add(s);
-                System.out.println("A new client is connected : " + s);
+                System.out.println("A new client is connected API Server : " + s);
 
                 // obtaining input and out streams
                 DataInputStream dis = new DataInputStream(s.getInputStream());

@@ -1,4 +1,4 @@
-package com.company;
+package com.company.model;
 
 import com.google.gson.annotations.SerializedName;
 import org.json.simple.JSONArray;
