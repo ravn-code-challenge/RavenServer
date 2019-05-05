@@ -1,11 +1,21 @@
 package com.company.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import static com.company.model.GiphyModel.*;
 
 public class GiphyList {
 
+
+    public static final String ID_STRING = "id";
+    public static final String TYPE_STRING = "type";
+    public static final String TITLE_STRING = "title";
+    public static final String SRC_STRING = "src";
+    public static final String AUTHOR_STRING = "author";
+    public static final String DATE_STRING = "date";
+    public static final String VIEW_COUNT_STRING = "viewCount";
 
     private static final String ASCENDING_STRING = "ascending";
     private static final String DESCENDING_STRING = "descending";
@@ -50,7 +60,7 @@ public class GiphyList {
         }
     }
 
-    public void setSortField(SortField newSortField) {
+    public String setSortField(SortField newSortField) {
         switch (newSortField) {
             case ID:
                 sortField = ID_STRING;
@@ -74,34 +84,195 @@ public class GiphyList {
                 sortField = VIEW_COUNT_STRING;
                 break;
         }
+        return null;
     }
 
 
-    public SortField getSortField(String sortField) {
-        String sortFieldLower = sortField.toLowerCase();
-        if(sortFieldLower.equals(ID_STRING)) {
+    public SortField getSortField() {
+        if(sortField.equals(ID_STRING)) {
             return SortField.ID;
         }
-        else if(sortFieldLower.equals(TYPE_STRING)) {
+        else if(sortField.equals(TYPE_STRING)) {
             return SortField.TYPE;
         }
-        else if(sortFieldLower.equals(TITLE_STRING)) {
+        else if(sortField.equals(TITLE_STRING)) {
             return SortField.TITLE;
         }
-        else if(sortFieldLower.equals(SRC_STRING)) {
+        else if(sortField.equals(SRC_STRING)) {
             return SortField.SRC;
         }
-        else if(sortFieldLower.equals(AUTHOR_STRING)) {
+        else if(sortField.equals(AUTHOR_STRING)) {
             return SortField.AUTHOR;
         }
-        else if(sortFieldLower.equals(DATE_STRING)) {
+        else if(sortField.equals(DATE_STRING)) {
             return SortField.DATE;
         }
-        else if(sortFieldLower.equals(VIEW_COUNT_STRING)) {
+        else if(sortField.equals(VIEW_COUNT_STRING)) {
             return SortField.VIEW_COUNT;
         }
         else {
             return SortField.ID;
+        }
+    }
+
+    public void sortList() {
+        Comparator<GiphyModel> comparator;
+        switch (getSortField()) {
+            case ID:
+                if(getSortType() == SortType.ASCENDING) {
+                    System.out.println("Sorting using ascending");
+                    comparator = new Comparator<GiphyModel>() {
+                        @Override
+                        public int compare(GiphyModel o1, GiphyModel o2) {
+                            if(o1.id == o2.id) return 0;
+                            if(o1.id > o2.id) return 1;
+                            return -1;
+                        }
+                    };
+                }
+                else {
+                    System.out.println("Sorting using descending");
+                    comparator = new Comparator<GiphyModel>() {
+                        @Override
+                        public int compare(GiphyModel o1, GiphyModel o2) {
+                            if(o1.id == o2.id) return 0;
+                            if(o1.id > o2.id) return -1;
+                            return 1;
+                        }
+                    };
+                }
+                models.sort(comparator);
+                break;
+            case TYPE:
+                if(getSortType() == SortType.ASCENDING) {
+                    System.out.println("Sorting using ascending");
+                    comparator = new Comparator<GiphyModel>() {
+                        @Override
+                        public int compare(GiphyModel o1, GiphyModel o2) {
+                            return o1.type.toLowerCase().compareTo(o2.type.toLowerCase());
+                        }
+                    };
+                }
+                else {
+                    System.out.println("Sorting using descending");
+                    comparator = new Comparator<GiphyModel>() {
+                        @Override
+                        public int compare(GiphyModel o1, GiphyModel o2) {
+                            return o2.type.toLowerCase().compareTo(o1.type.toLowerCase());
+                        }
+                    };
+                }
+                models.sort(comparator);
+                break;
+            case SRC:
+                if(getSortType() == SortType.ASCENDING) {
+                    System.out.println("Sorting using ascending");
+                    comparator = new Comparator<GiphyModel>() {
+                        @Override
+                        public int compare(GiphyModel o1, GiphyModel o2) {
+                            return o1.src.toLowerCase().compareTo(o2.src.toLowerCase());
+                        }
+                    };
+                }
+                else {
+                    System.out.println("Sorting using descending");
+                    comparator = new Comparator<GiphyModel>() {
+                        @Override
+                        public int compare(GiphyModel o1, GiphyModel o2) {
+                            return o2.src.toLowerCase().compareTo(o1.src.toLowerCase());
+                        }
+                    };
+                }
+                models.sort(comparator);
+                break;
+            case TITLE:
+                if(getSortType() == SortType.ASCENDING) {
+                    System.out.println("Sorting using ascending");
+                    comparator = new Comparator<GiphyModel>() {
+                        @Override
+                        public int compare(GiphyModel o1, GiphyModel o2) {
+                            return o1.title.toLowerCase().compareTo(o2.title.toLowerCase());
+                        }
+                    };
+                }
+                else {
+                    System.out.println("Sorting using descending");
+                    comparator = new Comparator<GiphyModel>() {
+                        @Override
+                        public int compare(GiphyModel o1, GiphyModel o2) {
+                            return o2.title.toLowerCase().compareTo(o1.title.toLowerCase());
+                        }
+                    };
+                }
+                models.sort(comparator);
+                break;
+            case AUTHOR:
+                if(getSortType() == SortType.ASCENDING) {
+                    System.out.println("Sorting using ascending");
+                    comparator = new Comparator<GiphyModel>() {
+                        @Override
+                        public int compare(GiphyModel o1, GiphyModel o2) {
+                            return o1.author.toLowerCase().compareTo(o2.author.toLowerCase());
+                        }
+                    };
+                }
+                else {
+                    System.out.println("Sorting using descending");
+                    comparator = new Comparator<GiphyModel>() {
+                        @Override
+                        public int compare(GiphyModel o1, GiphyModel o2) {
+                            return o2.author.toLowerCase().compareTo(o1.author.toLowerCase());
+                        }
+                    };
+                }
+                models.sort(comparator);
+                break;
+            case DATE:
+                if(getSortType() == SortType.ASCENDING) {
+                    System.out.println("Sorting using ascending");
+                    comparator = new Comparator<GiphyModel>() {
+                        @Override
+                        public int compare(GiphyModel o1, GiphyModel o2) {
+                            return o1.date.compareTo(o2.date);
+                        }
+                    };
+                }
+                else {
+                    System.out.println("Sorting using descending");
+                    comparator = new Comparator<GiphyModel>() {
+                        @Override
+                        public int compare(GiphyModel o1, GiphyModel o2) {
+                            return o2.date.compareTo(o1.date);
+                        }
+                    };
+                }
+                models.sort(comparator);
+                break;
+            case VIEW_COUNT:
+                if(getSortType() == SortType.ASCENDING) {
+                    System.out.println("Sorting using ascending");
+                    comparator = new Comparator<GiphyModel>() {
+                        @Override
+                        public int compare(GiphyModel o1, GiphyModel o2) {
+                            if(o1.viewCount == o2.viewCount) return 0;
+                            if(o1.viewCount > o2.viewCount) return 1;
+                            return -1;
+                        }
+                    };
+                }
+                else {
+                    System.out.println("Sorting using descending");
+                    comparator = new Comparator<GiphyModel>() {
+                        @Override
+                        public int compare(GiphyModel o1, GiphyModel o2) {
+                            if(o1.viewCount == o2.viewCount) return 0;
+                            if(o1.viewCount > o2.viewCount) return -1;
+                            return 1;
+                        }
+                    };
+                }
+                models.sort(comparator);
+                break;
         }
     }
 

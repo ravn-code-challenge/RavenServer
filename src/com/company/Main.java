@@ -1,6 +1,7 @@
 package com.company;
 
 import com.company.server.ApiServer;
+import com.company.server.GiphyController;
 import com.company.server.PushServer;
 
 import java.io.BufferedReader;
@@ -11,9 +12,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-        //Start server thread
-        ApiServer server = new ApiServer();
-        server.start();
+        //Start apiServer thread
+        ApiServer apiServer = new ApiServer();
+        apiServer.start();
 
         PushServer pushServer = PushServer.getInstance();
         pushServer.start();
@@ -28,16 +29,25 @@ public class Main {
                 System.out.println("1. View IP Address currently serving in");
                 System.out.println("2. Number of Clients connected");
                 System.out.println("3. Data serving to Clients");
+                System.out.println("4. Write Data to persistant storage");
                 int name = Integer.parseInt(reader.readLine());
 
-                if(name == 4) return;
                 switch (name) {
                     case 1:
-                        System.out.println(server.getServerIP());
+                        System.out.println("Server IP:" + apiServer.getServerIP());
                         break;
                     case 2:
+                        System.out.println("Clients Connected:" + apiServer.getNumberOfClients());
                         break;
                     case 3:
+                        System.out.println(GiphyController.getInstance().getJsonList());
+                        break;
+                    case 4:
+                        if(GiphyController.getInstance().writeList()) {
+                            System.out.println("Writing data was successful");
+                        }else {
+                            System.out.println("Failed to write data");
+                        }
                         break;
                     default:
                 }

@@ -47,16 +47,17 @@ public class GiphyController {
         model.id = nextAvailableId;
         nextAvailableId++;
         giphyList.models.add(model);
-        //if write was successful
-        if(writeList()) {
-            //Add to list and return true
-            System.out.println("Adding to giphyList: ");
-            return true;
-        }
-        else {
-            giphyList.models.remove(model);
-            return false;
-        }
+        return true;
+//        //if write was successful
+//        if(writeList()) {
+//            //Add to list and return true
+//            System.out.println("Adding to giphyList: ");
+//            return true;
+//        }
+//        else {
+//            giphyList.models.remove(model);
+//            return false;
+//        }
     }
 
     public boolean update(String json) {
@@ -67,12 +68,28 @@ public class GiphyController {
             if(model.id == giphyList.models.get(i).id) {
                 giphyList.models.remove(i);
                 giphyList.models.add(i, model);
-                writeList();
+//                writeList();
                 return true;
             }
         }
         return false;
     }
+
+    /**
+     * IncrementViewCout. Search for
+     * @param giphyId
+     * @return
+     */
+    public boolean incrementViewCount(long giphyId) {
+        for(int i = 0; i < giphyList.models.size(); i++) {
+            if(giphyId == giphyList.models.get(i).id) {
+                giphyList.models.get(i).viewCount++;
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     /**
      * Go through list and remove that item
@@ -89,11 +106,24 @@ public class GiphyController {
         return false;
     }
 
+    public String sort(String sortField, String sortType) {
+        giphyList.sortField = sortField;
+        giphyList.sortType = sortType;
+        System.out.println("Sort field: " + giphyList.sortField);
+        System.out.println("Sort type: " + giphyList.sortType);
+        giphyList.sortList();
+        return gson.toJson(giphyList);
+    }
+
     /**
      * Writes list into data.json file
      * @return
      */
     public boolean writeList() {
+        if (giphyList == null) {
+            System.out.println("Giphy is is null! nothing to write");
+            return false;
+        }
         boolean success = true;
         try {
             rwlock.writeLock().lock();
@@ -117,7 +147,11 @@ public class GiphyController {
     private GiphyList getList() {
 
         if(giphyList != null) {
+            System.out.println("Giphy List is not null!");
             return giphyList;
+        }
+        else {
+            System.out.println("Need to read from file since list is null");
         }
 
         rwlock.readLock().lock();

@@ -13,11 +13,10 @@ public class ApiServer extends Thread{
 
     ServerSocket ss;
     ArrayList<Socket> clients = new ArrayList<>();
-    GiphyController giphyController;
+    GiphyController giphyController = GiphyController.getInstance();
 
     @Override
     public void run() {
-        giphyController = GiphyController.getInstance();
         try {
             ss = new ServerSocket(8381);
             Socket s = null;
@@ -59,6 +58,10 @@ public class ApiServer extends Thread{
         }
     }
 
+    public int getNumberOfClients() {
+        return clients.size();
+    }
+
     // ClientHandler class
     class ClientHandler extends Thread {
         final DataInputStream dis;
@@ -74,7 +77,6 @@ public class ApiServer extends Thread{
             this.dis = dis;
             this.dos = dos;
         }
-
 
         String getFirstArgument(String arg) {
             int index = arg.indexOf("{");
@@ -104,8 +106,7 @@ public class ApiServer extends Thread{
             String argument;
             String firstArgument;
             String secondArgument;
-            while (true)
-            {
+            while (true) {
                 try {
 
                     // receive the answer from client
@@ -125,6 +126,7 @@ public class ApiServer extends Thread{
                         if(result) {
                             System.out.println("Write succeeded");
                             dos.writeUTF("ok");
+                            PushServer.getInstance().pushListToClients(giphyController.getJsonList());
                         }
                         else {
                             System.out.println("Write failed");
@@ -138,6 +140,7 @@ public class ApiServer extends Thread{
                         if(result) {
                             System.out.println("Write succeeded");
                             dos.writeUTF("ok");
+                            PushServer.getInstance().pushListToClients(giphyController.getJsonList());
                         }
                         else {
                             System.out.println("Write failed");
@@ -158,11 +161,21 @@ public class ApiServer extends Thread{
                                 dos.writeUTF("error/does not exist");
                             }
                         }
-
                     }
-
+                    else if(firstArgument.toLowerCase().contains("viewcount")) {
+                        System.out.println("Viewcount called: " + argument);
+                        System.out.println(secondArgument);
+                        boolean result = giphyController.incrementViewCount(Long.parseLong(secondArgument));
+                        if(result) {
+                            System.out.println("Increment succeeded");
+                            PushServer.getInstance().pushListToClients(giphyController.getJsonList());
+                        }
+                    }
                     else if(firstArgument.toLowerCase().contains("sort")) {
-                        System.out.println("Sort called");
+                        String[] args = secondArgument.split("&");
+                        String json = giphyController.sort(args[0], args[1]);
+                        dos.writeUTF("ok");
+                        PushServer.getInstance().pushListToClients(json);
                     }
                     else if(firstArgument.toLowerCase().contains("exit")) {
                         System.out.println("Exit called");

@@ -40,5 +40,24 @@ public class GiphyModel {
 
     public long viewOrder;
 
+    public String getSortFieldValue(GiphyList.SortField sortField) {
+        switch (sortField) {
+            case ID:
+                return Long.toString(id);
+            case SRC:
+                return src;
+            case DATE:
+                return date.toString();
+            case TYPE:
+                return type;
+            case TITLE:
+                return title;
+            case AUTHOR:
+                return author;
+            case VIEW_COUNT:
+                return Long.toString(viewCount);
+        }
+        return null;
+    }
 
 }

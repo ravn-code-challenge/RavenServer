@@ -1,5 +1,7 @@
 package com.company.server;
 
+import com.company.model.GiphyList;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -15,8 +17,6 @@ public class PushServer extends Thread{
     ArrayList<Socket> clients = new ArrayList<>();
     ArrayList<DataOutputStream> outputStreams = new ArrayList<>();
 
-    GiphyController giphyController;
-
     private static PushServer pushServer;
 
     private PushServer() {
@@ -30,7 +30,6 @@ public class PushServer extends Thread{
 
     @Override
     public void run() {
-        giphyController = GiphyController.getInstance();
         try {
             ss = new ServerSocket(8380);
             Socket s = null;
@@ -47,6 +46,17 @@ public class PushServer extends Thread{
         catch (IOException e) {
             System.out.println("Socket connection error: " + e.getMessage());
         }
+    }
+
+    public void pushListToClients(String giphyList) {
+        try {
+            for (DataOutputStream dOut : outputStreams) {
+                dOut.writeUTF("list/" + giphyList);
+            }
+        }catch (IOException e) {
+
+        }
+        System.out.println("Finish pushing to clients");
     }
 
     public String getServerIP() {
